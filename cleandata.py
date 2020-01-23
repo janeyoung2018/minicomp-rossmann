@@ -63,7 +63,7 @@ def cleanData(df):
     df['SchoolHoliday'] = df.apply(helper_schoolholiday, axis=1)
     print("Filled school holidays based on state holidays")
 
-# #   Taking care of shops in train stations
+#   Taking care of shops in train stations
 #     def train_station_stores_nan_open(df):
 #         mask = df.loc[:, 'DayOfWeek'] == 7.0
 #         dftrain2 = df[mask]
@@ -76,11 +76,11 @@ def cleanData(df):
 #             return row['Open']
 #
 #     df['Open'] = df.apply(train_station_stores_nan_open, axis=1)
-#
-#     print("Train station stores now open! Enjoy your sunday shopping!")
 
-    # """Sets all Shops with isna('Open') to 0 on a German public holiday"""
-    #de_holidays = holidays.DE()
+    print("Train station stores now open! Enjoy your sunday shopping!")
+
+#   Sets all Shops with isna('Open') to 0 on a German public holiday
+#   de_holidays = holidays.DE()
 
     for i in range(len(df)):
         if (np.isnan(df['Open'][i])) & (df['Date'][i] in holidays.DE()):
@@ -89,7 +89,7 @@ def cleanData(df):
             pass
     print('Public Holidays updated')
 
-    # take care of regional stateholiday
+#   take care of regional stateholiday
     for i in range(len(df)):
         if (pd.isnull(df['StateHoliday'][i])) & (df['Month'][i] == 1) & (df['Day'][i] == 6):
             if df['Year'][i] == 2013:
@@ -192,18 +192,6 @@ def cleanData(df):
     df['Sales'] = df.apply(helper_sales, axis=1)
     print("Finish sales")
 
-    #Gets dummies for 'StateHolidays' into three columns and concat them to the table
-    NewStateHoliday = pd.get_dummies(df['StateHoliday'])
-    NewStateHoliday.rename(columns={'0': 'NoStateHoliday', 'a': 'PublicHoliday', 'b': 'EasterHoliday', 'c': 'Christmas Holiday'}, inplace=True)
-    df = pd.concat([df, NewStateHoliday], axis=1)
-    print('State Holidays Encoded')
-
-    #Gets dummies for 'PromoInterval' into three columns and concat them to the table
-    PromoInterval = pd.get_dummies(df['PromoInterval'])
-    df = pd.concat([df, PromoInterval], axis=1)
-    print('PromoIntervals encoded')
-
-
     def fillEmptyDistances(row):
         """Filling empty distances with mean"""
         if pd.isnull(row['CompetitionDistance']):
@@ -213,17 +201,32 @@ def cleanData(df):
 
     df['CompetitionDistance'] = df.apply(fillEmptyDistances, axis=1)
 
-    #Encoding store types
+    #Gets dummies for 'PromoInterval' into three columns and concat them to the table
+    PromoInterval = pd.get_dummies(df['PromoInterval'])
+    df = pd.concat([df, PromoInterval], axis=1)
+    print('PromoIntervals encoded')
+
+    #Encoding Store Types
     NewStoreType = pd.get_dummies(df['StoreType'])
     NewStoreType.rename(columns={'a': 'StoreType a', 'b': 'StoreType b', 'c': 'StoreType c', 'd': 'StoreType d'},
                         inplace=True)
-    store = pd.concat([df, NewStoreType], axis=1)
+    df = pd.concat([df, NewStoreType], axis=1)
     print('Store Type Encoded')
 
+    #Encoding State Holidays
+    newstateholiday = pd.get_dummies(df['StateHoliday'])
+    newstateholiday.rename(
+        columns={'0': 'NoStateHoliday', 'a': 'PublicHoliday', 'b': 'EasterHoliday', 'c': 'Christmas Holiday'},
+        inplace=True)
+    df = pd.concat([df, newstateholiday], axis=1)
+    print('State Holidays Encoded')
 
     #Gets dummies for 'Assortment' into three columns and concat them to the table
-    NewAssortment = pd.get_dummies(store['Assortment'])
+    NewAssortment = pd.get_dummies(df['Assortment'])
     NewAssortment.rename(columns={'a': 'Basic Assort', 'b': 'Extra Assort', 'c': 'Extended Assort'}, inplace=True)
-    store = pd.concat([df, NewAssortment], axis=1)
+    df = pd.concat([df, NewAssortment], axis=1)
+
+
     print('Assortment Type Encoded')
     print('---Cleaning completed---')
+    return df

@@ -14,7 +14,7 @@ newdf = train.merge(store,how='left',on='Store')
 4. Run:
 ```bash
 from cleandata import cleanData
-cleanData(newdf)
+newdf = cleanData(newdf)
 ```
 
 5. Run the model:
