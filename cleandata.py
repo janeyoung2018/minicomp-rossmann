@@ -264,7 +264,7 @@ def cleanData(df, settype):
     else:
         pass
     df.drop(['StoreType'], axis=1, inplace=True)
-    df = df.dropna(axis=0, how=any)
+    df = df.dropna(axis=0, how='any')
 
     print('Dropped last leftovers')
     print('All done!')
