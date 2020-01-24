@@ -5,11 +5,10 @@
 ##### 1. Checkout the repo
 
 ##### 2. Install the requirements
-Run the installation in your shell within the repo
+Run :
 ```
-pip install -r requirements.txt
+bash setup.sh
 ```
-
 ##### 3. Unzip data
 
 ```
