@@ -172,7 +172,7 @@ def cleanData(df, settype):
         df_mean_customers = df['Customers'].mean()
         print('Mean customers of test cleaning:' + str(df_mean_customers))
     elif settype == 'test':
-        df_mean_customers = input('Please enter mean customers of test cleaning:')
+        df_mean_customers = 758.7492748450405
     else:
         pass
 
@@ -193,7 +193,7 @@ def cleanData(df, settype):
          mean_sales = df.loc[:, 'Sales'].mean()
          print('Mean Sales of training set = ' + str(mean_sales))
     elif settype == 'test':
-         mean_sales = float(input('Please enter mean sales of test cleaning:'))
+         mean_sales = 6836.722219708965
 
     def helper_sales(row):
         if pd.isnull(row['Sales']) & (float(row['Customers']) > 0):
@@ -202,13 +202,13 @@ def cleanData(df, settype):
             return row['Sales']
 
     df['Sales'] = df.apply(helper_sales, axis=1)
-    print("Finish sales")
+    print("Finished cleaning sales")
 
     if settype == 'train':
         competitionDistanceMean = df.loc[:, 'CompetitionDistance'].mean()
         print('Mean Competition Distance of training set = ' + str(competitionDistanceMean))
     elif settype == 'test':
-        competitionDistanceMean = input('Please enter mean competition distance of test cleaning:')
+        competitionDistanceMean = 5446.105182647453
 
 
     def fillEmptyDistances(row):
