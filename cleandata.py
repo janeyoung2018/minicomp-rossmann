@@ -167,9 +167,8 @@ def cleanData(df, settype):
 
     print('Adjusted open status of shops according to state holidays')
 
-    fill empty 'Customers' with average customer number when open=1.0, when open=0.0 customer=0.0
+    #fill empty 'Customers' with average customer number when open=1.0, when open=0.0 customer=0.0
     if settype == 'train':
-        print(df.dtypes)
         df_mean_customers = df['Customers'].mean()
         print('Mean customers of test cleaning:' + str(df_mean_customers))
     elif settype == 'test':
@@ -192,9 +191,9 @@ def cleanData(df, settype):
     # Fills empty 'Sales'-Cells in train with average if there have been non 0 customers in the shop
     if (settype == 'train'):
         mean_sales = df.loc[:, 'Sales'].mean()
-        print('Mean Sales of training set = ' + str(mean_Sales))
+        print('Mean Sales of training set = ' + str(mean_sales))
     elif settype == 'test':
-        mean_sales = input('Please enter mean sales of test cleaning:')
+        mean_sales = float(input('Please enter mean sales of test cleaning:'))
 
     def helper_sales(row):
         if pd.isnull(row['Sales']) & (row['Customers'] > 0):
