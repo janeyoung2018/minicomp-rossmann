@@ -47,7 +47,12 @@ newdf = train.merge(store,how='left',on='Store')
 from cleandata import cleanData
 newdf = cleanData(newdf)
 ```
-
+9. Run model
+```bash
+```
+10. Test on test.csv
+```bash
+```
 5. Run the model:
 ```bash
 TBD
