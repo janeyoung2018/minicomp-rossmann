@@ -7,7 +7,8 @@ import pandas as pd
 
 
 
-def cleanData(df):
+def cleanData(df, settype):
+    """Cleans data. Set settype to 'train' for training set and 'test' for test set"""
     # eliminate rows where store is empty
     df = df[~df.loc[:, 'Store'].isnull()]
     df.reset_index(inplace=True)
@@ -64,23 +65,23 @@ def cleanData(df):
     print("Filled school holidays based on state holidays")
 
     #   Taking care of shops in train stations
-    def applymask(df):
-        mask = df.loc[:,'DayOfWeek'] == 7.0
-        train2 = df[mask]
-        train3 = train2.groupby('Store')['Open'].sum().to_frame().rename(columns={'Open': 'newopen'})
-        train_station_stores = [i for i in train3[train3.newopen > 3].index]
-        return train_station_stores
-    train_station_stores = applymask(df)
-
-    def train_station_stores_nan_open(row):
-        if (pd.isnull(row['Open'])) & (row['Store'] in train_station_stores):
-            return 1.0
-        else:
-            return row['Open']
-
-    df['Open'] = df.apply(train_station_stores_nan_open, axis=1)
-
-    print("Train station store always open")
+    # def applymask(df):
+    #     mask = df.loc[:,'DayOfWeek'] == 7.0
+    #     train2 = df[mask]
+    #     train3 = train2.groupby('Store')['Open'].sum().to_frame().rename(columns={'Open': 'newopen'})
+    #     train_station_stores = [i for i in train3[train3.newopen > 3].index]
+    #     return train_station_stores
+    # train_station_stores = applymask(df)
+    #
+    # def train_station_stores_nan_open(row):
+    #     if (pd.isnull(row['Open'])) & (row['Store'] in train_station_stores):
+    #         return 1.0
+    #     else:
+    #         return row['Open']
+    #
+    # df['Open'] = df.apply(train_station_stores_nan_open, axis=1)
+    #
+    # print("Train station store always open")
 
     #   Sets all Shops with isna('Open') to 0 on a German public holiday
     #   de_holidays = holidays.DE()
@@ -167,7 +168,13 @@ def cleanData(df):
     print('Adjusted open status of shops according to state holidays')
 
     # fill empty 'Customers' with average customer number when open=1.0, when open=0.0 customer=0.0
-    df_mean_customers = df.loc[:, 'Customers'].mean()
+    if settype == 'train':
+        df_mean_customers = df['Customers'].mean()
+        print('Mean customers of test cleaning:' + str(df_mean_customers))
+    elif settype == 'test':
+        df_mean_customers = input('Please enter mean customers of test cleaning:')
+    else:
+        pass
 
     def helper_customers(row):
         if (pd.isnull(row['Customers'])) & (row['Open'] == 1.0):
@@ -181,13 +188,15 @@ def cleanData(df):
 
     print('Finished filling in empty customers cells')
 
-
-
     # Fills empty 'Sales'-Cells in train with average if there have been non 0 customers in the shop
-    mean_sales = df['Sales'].mean()
+    if (settype == 'train'):
+         mean_sales = df.loc[:, 'Sales'].mean()
+         print('Mean Sales of training set = ' + str(mean_sales))
+    elif settype == 'test':
+         mean_sales = float(input('Please enter mean sales of test cleaning:'))
 
     def helper_sales(row):
-        if pd.isnull(row['Sales']) & (row['Customers'] > 0):
+        if pd.isnull(row['Sales']) & (float(row['Customers']) > 0):
             return mean_sales
         else:
             return row['Sales']
@@ -195,10 +204,17 @@ def cleanData(df):
     df['Sales'] = df.apply(helper_sales, axis=1)
     print("Finish sales")
 
+    if settype == 'train':
+        competitionDistanceMean = df.loc[:, 'CompetitionDistance'].mean()
+        print('Mean Competition Distance of training set = ' + str(competitionDistanceMean))
+    elif settype == 'test':
+        competitionDistanceMean = input('Please enter mean competition distance of test cleaning:')
+
+
     def fillEmptyDistances(row):
         """Filling empty distances with mean"""
         if pd.isnull(row['CompetitionDistance']):
-            return df['CompetitionDistance'].mean()
+            return competitionDistanceMean
         else:
             return row['CompetitionDistance']
 
@@ -232,14 +248,20 @@ def cleanData(df):
     print('Assortment Type Encoded')
     print('---Cleaning completed---')
 
-    df = df[df['Open'] > 0]
-    df = df[df['Sales'] > 0]
+    df = df[df['Open'] != 0]
+    df = df[df['Sales'] != 0]
     df.drop(['Date'], axis=1, inplace=True)
     df.drop(['StateHoliday'], axis=1, inplace=True)
     df.drop(['Assortment'], axis=1, inplace=True)
     df.drop(['PromoInterval'], axis=1, inplace=True)
-    df.drop(['level_0'], axis=1, inplace=True)
-    df.drop(['index'], axis=1, inplace=True)
+    if 'level_0' in df.columns:
+        df.drop(['level_0'], axis=1, inplace=True)
+    else:
+        pass
+    if 'index' in df.columns:
+        df.drop(['index'], axis=1, inplace=True)
+    else:
+        pass
     df.drop(['StoreType'], axis=1, inplace=True)
 
     print('Dropped last leftovers')
