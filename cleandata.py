@@ -151,7 +151,7 @@ def cleanData(df, settype):
             return row['StateHoliday']
 
     df['StateHoliday'] = df.apply(remained_stateholiday, axis=1)
-    print('finished remaining stateholidays')
+    print('Finished cleaning remaining stateholidays')
 
     # Sets all Shops with isna('Open') to 0 based on stateholiday state
     def open_stateholiday(row):
@@ -253,6 +253,7 @@ def cleanData(df, settype):
     df.drop(['Date'], axis=1, inplace=True)
     df.drop(['StateHoliday'], axis=1, inplace=True)
     df.drop(['Assortment'], axis=1, inplace=True)
+    df.drop(['Christmas Holiday'], axis=1, inplace=True)
     df.drop(['PromoInterval'], axis=1, inplace=True)
     if 'level_0' in df.columns:
         df.drop(['level_0'], axis=1, inplace=True)
@@ -263,6 +264,7 @@ def cleanData(df, settype):
     else:
         pass
     df.drop(['StoreType'], axis=1, inplace=True)
+    df = df.dropna(axis=0, how=any)
 
     print('Dropped last leftovers')
     print('All done!')
