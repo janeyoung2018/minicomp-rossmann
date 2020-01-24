@@ -14,7 +14,7 @@ def cleanData(df):
 
     print("Dropped rows without store-ids")
 
-#    Join Function Needed here!
+    #    Join Function Needed here!
 
     # extract year, month and day from Date
     date = pd.DatetimeIndex(df.loc[:, 'Date'])
@@ -22,9 +22,10 @@ def cleanData(df):
     df.loc[:, 'Month'] = date.month
     df.loc[:, 'Day'] = date.day
 
+
     print("Extracted year, month and day from Date")
 
-#   extract day of week
+    #   extract day of week
     df.loc[:, 'DayOfWeek'] = date.dayofweek + 1
 
     print("Extracted and reset day of week")
@@ -36,12 +37,12 @@ def cleanData(df):
             pass
     print('Set Sales to 0 if customers are 0')
 
-#   deleting 0 sales rows
+    #   deleting 0 sales rows
     df = df[df['Sales'] != 0]
     df.reset_index(inplace=True)
     print('Dropped 0-sales rows in df')
 
-#   Sets Open to 1 if Sales happened while Open is 0
+    #   Sets Open to 1 if Sales happened while Open is 0
 
     for i in range(len(df)):
         if (df['Sales'][i] > 0) & (np.isnan(df['Open'][i])):
@@ -51,36 +52,38 @@ def cleanData(df):
 
     print('Set Open = 1 if Sales > 0')
 
-#   function to fill school holiday based on state holiday
+    #   function to fill school holiday based on state holiday
 
     def helper_schoolholiday(row):
-        for i in range(len(df)):
-            if pd.isnull(df['SchoolHoliday'][i]):
-                return 0.0
-            else:
-                return df['SchoolHoliday'][i]
+        if pd.isnull(row['SchoolHoliday']):
+            return 0.0
+        else:
+            return row['SchoolHoliday']
 
     df['SchoolHoliday'] = df.apply(helper_schoolholiday, axis=1)
     print("Filled school holidays based on state holidays")
 
-#   Taking care of shops in train stations
-#     def train_station_stores_nan_open(df):
-#         mask = df.loc[:, 'DayOfWeek'] == 7.0
-#         dftrain2 = df[mask]
-#         dftrain3 = dftrain2.groupby('Store')['Open'].sum().to_frame().rename(columns={'Open': 'newopen'})
-#         train_station_stores = [i for i in dftrain3[(dftrain3.newopen > 3)].index]
-#
-#         if (pd.isnull(row['Open'])) & (row['Store'] in train_station_stores):
-#             return 1.0
-#         else:
-#             return row['Open']
-#
-#     df['Open'] = df.apply(train_station_stores_nan_open, axis=1)
+    #   Taking care of shops in train stations
+    def applymask(df):
+        mask = df.loc[:,'DayOfWeek'] == 7.0
+        train2 = df[mask]
+        train3 = train2.groupby('Store')['Open'].sum().to_frame().rename(columns={'Open': 'newopen'})
+        train_station_stores = [i for i in train3[train3.newopen > 3].index]
+        return train_station_stores
+    train_station_stores = applymask(df)
 
-    print("Train station stores now open! Enjoy your sunday shopping!")
+    def train_station_stores_nan_open(row):
+        if (pd.isnull(row['Open'])) & (row['Store'] in train_station_stores):
+            return 1.0
+        else:
+            return row['Open']
 
-#   Sets all Shops with isna('Open') to 0 on a German public holiday
-#   de_holidays = holidays.DE()
+    df['Open'] = df.apply(train_station_stores_nan_open, axis=1)
+
+    print("Train station store always open")
+
+    #   Sets all Shops with isna('Open') to 0 on a German public holiday
+    #   de_holidays = holidays.DE()
 
     for i in range(len(df)):
         if (np.isnan(df['Open'][i])) & (df['Date'][i] in holidays.DE()):
@@ -89,7 +92,7 @@ def cleanData(df):
             pass
     print('Public Holidays updated')
 
-#   take care of regional stateholiday
+    #   take care of regional stateholiday
     for i in range(len(df)):
         if (pd.isnull(df['StateHoliday'][i])) & (df['Month'][i] == 1) & (df['Day'][i] == 6):
             if df['Year'][i] == 2013:
@@ -163,7 +166,7 @@ def cleanData(df):
 
     print('Adjusted open status of shops according to state holidays')
 
-# fill empty 'Customers' with average customer number when open=1.0, when open=0.0 customer=0.0
+    # fill empty 'Customers' with average customer number when open=1.0, when open=0.0 customer=0.0
     df_mean_customers = df.loc[:, 'Customers'].mean()
 
     def helper_customers(row):
@@ -226,7 +229,19 @@ def cleanData(df):
     NewAssortment.rename(columns={'a': 'Basic Assort', 'b': 'Extra Assort', 'c': 'Extended Assort'}, inplace=True)
     df = pd.concat([df, NewAssortment], axis=1)
 
-
     print('Assortment Type Encoded')
     print('---Cleaning completed---')
+
+    df = df[df['Open'] > 0]
+    df = df[df['Sales'] > 0]
+    df.drop(['Date'], axis=1, inplace=True)
+    df.drop(['StateHoliday'], axis=1, inplace=True)
+    df.drop(['Assortment'], axis=1, inplace=True)
+    df.drop(['PromoInterval'], axis=1, inplace=True)
+    df.drop(['level_0'], axis=1, inplace=True)
+    df.drop(['index'], axis=1, inplace=True)
+    df.drop(['StoreType'], axis=1, inplace=True)
+
+    print('Dropped last leftovers')
+    print('All done!')
     return df
