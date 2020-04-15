@@ -45,5 +45,5 @@ if __name__ == '__main__':
     os.rename('./data/raw/store.csv', './data/store.csv')
     shutil.rmtree('./data/raw')
 
-    if bool(int(args.test)):
-        test.to_csv('./data/test.csv')
+    #if bool(int(args.test)):
+    test.to_csv('./data/test.csv')
