@@ -6,8 +6,7 @@
 
 ##### 2. Install the requirements
 
-
-##### 2. Get the prediction on test data(about 400 seconds)
+##### 3. Get the prediction on test data(about 400 seconds)
 
 ### Run :
 
