@@ -5,16 +5,13 @@
 ##### 1. Checkout the repo
 
 ##### 2. Install the requirements
-Run :
+
+
+##### 2. Get the prediction on test data(about 400 seconds)
+
+### Run :
+
 ```
 bash setup.sh
 ```
-##### 3. Unzip data
 
-```
-!python data.py
-```
-
-##### 4. Open the Jupter Notebook given in the repo
-
-Open ```Rossman_Prediction.ipynb``` and follow the prompts
