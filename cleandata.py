@@ -221,40 +221,40 @@ def cleanData(df, settype):
     df['CompetitionDistance'] = df.apply(fillEmptyDistances, axis=1)
 
     #Gets dummies for 'PromoInterval' into three columns and concat them to the table
-    PromoInterval = pd.get_dummies(df['PromoInterval'])
-    df = pd.concat([df, PromoInterval], axis=1)
-    print('PromoIntervals encoded')
+    #PromoInterval = pd.get_dummies(df['PromoInterval'])
+    #df = pd.concat([df, PromoInterval], axis=1)
+    #print('PromoIntervals encoded')
 
     #Encoding Store Types
-    NewStoreType = pd.get_dummies(df['StoreType'])
-    NewStoreType.rename(columns={'a': 'StoreType a', 'b': 'StoreType b', 'c': 'StoreType c', 'd': 'StoreType d'},
-                        inplace=True)
-    df = pd.concat([df, NewStoreType], axis=1)
-    print('Store Type Encoded')
+    #NewStoreType = pd.get_dummies(df['StoreType'])
+    #NewStoreType.rename(columns={'a': 'StoreType a', 'b': 'StoreType b', 'c': 'StoreType c', 'd': 'StoreType d'},
+     #                   inplace=True)
+    #df = pd.concat([df, NewStoreType], axis=1)
+    #print('Store Type Encoded')
 
     #Encoding State Holidays
-    newstateholiday = pd.get_dummies(df['StateHoliday'])
-    newstateholiday.rename(
-        columns={'0': 'NoStateHoliday', 'a': 'PublicHoliday', 'b': 'EasterHoliday', 'c': 'Christmas Holiday'},
-        inplace=True)
-    df = pd.concat([df, newstateholiday], axis=1)
-    print('State Holidays Encoded')
+    #newstateholiday = pd.get_dummies(df['StateHoliday'])
+    #newstateholiday.rename(
+     #   columns={'0': 'NoStateHoliday', 'a': 'PublicHoliday', 'b': 'EasterHoliday', 'c': 'Christmas Holiday'},
+     #   inplace=True)
+    #df = pd.concat([df, newstateholiday], axis=1)
+    #print('State Holidays Encoded')
 
     #Gets dummies for 'Assortment' into three columns and concat them to the table
-    NewAssortment = pd.get_dummies(df['Assortment'])
-    NewAssortment.rename(columns={'a': 'Basic Assort', 'b': 'Extra Assort', 'c': 'Extended Assort'}, inplace=True)
-    df = pd.concat([df, NewAssortment], axis=1)
+    #NewAssortment = pd.get_dummies(df['Assortment'])
+    #NewAssortment.rename(columns={'a': 'Basic Assort', 'b': 'Extra Assort', 'c': 'Extended Assort'}, inplace=True)
+    #df = pd.concat([df, NewAssortment], axis=1)
 
-    print('Assortment Type Encoded')
-    print('---Cleaning completed---')
+    #print('Assortment Type Encoded')
+    #print('---Cleaning completed---')
 
     df = df[df['Open'] != 0]
     df = df[df['Sales'] != 0]
     df.drop(['Date'], axis=1, inplace=True)
-    df.drop(['StateHoliday'], axis=1, inplace=True)
-    df.drop(['Assortment'], axis=1, inplace=True)
-    df.drop(['Christmas Holiday'], axis=1, inplace=True)
-    df.drop(['PromoInterval'], axis=1, inplace=True)
+    #df.drop(['StateHoliday'], axis=1, inplace=True)
+    #df.drop(['Assortment'], axis=1, inplace=True)
+    #df.drop(['Christmas Holiday'], axis=1, inplace=True)
+    #df.drop(['PromoInterval'], axis=1, inplace=True)
     if 'level_0' in df.columns:
         df.drop(['level_0'], axis=1, inplace=True)
     else:
@@ -263,9 +263,9 @@ def cleanData(df, settype):
         df.drop(['index'], axis=1, inplace=True)
     else:
         pass
-    df.drop(['StoreType'], axis=1, inplace=True)
+    #df.drop(['StoreType'], axis=1, inplace=True)
     df = df.dropna(axis=0, how='any')
 
     print('Dropped last leftovers')
-    print('All done!')
+    print('Clean all done!')
     return df
