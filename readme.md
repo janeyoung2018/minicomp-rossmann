@@ -1,4 +1,4 @@
-## Rossman Kaggle Mini-Competition
+## Rossmann Kaggle Mini-Competition
 
 ## Setup
 
